@@ -1,0 +1,31 @@
+{
+  "primary": "#5B5781",
+  "secondary": "#AFBD00",
+  "neutral": "stone",
+  "poles": {
+    "lab": {
+      "color": "#5B5781",
+      "bgColor": "#c8bfd2"
+    },
+    "design": {
+      "color": "#AFBD00",
+      "bgColor": "#e1e6d8"
+    },
+    "academy": {
+      "color": "#B01A19",
+      "bgColor": "#eac7b8"
+    },
+    "nursery": {
+      "color": "#EF9B0D",
+      "bgColor": "#fbe6c3"
+    },
+    "implementation": {
+      "color": "#234766",
+      "bgColor": "#c9d1d9"
+    },
+    "website": {
+      "color": "#5B5781",
+      "bgColor": "#FFFFFF"
+    }
+  }
+}

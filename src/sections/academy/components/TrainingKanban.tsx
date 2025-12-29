@@ -118,13 +118,9 @@ export function TrainingKanban({
             return (
               <div
                 key={status}
-                className={`flex-shrink-0 w-full lg:w-80 bg-white dark:bg-stone-900 rounded-xl border-2 ${statusColors[status]} p-5 shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 relative overflow-hidden group animate-in fade-in-0 slide-in-from-bottom-4`}
+                className={`flex-shrink-0 w-full lg:w-80 bg-white dark:bg-stone-900 rounded-xl border-2 ${statusColors[status]} p-5 shadow-sm relative overflow-hidden group animate-in fade-in-0 slide-in-from-bottom-4`}
                 style={{ animationDelay: `${index * 50}ms` }}
               >
-                {/* Academy accent for active columns */}
-                {isActiveStatus && (
-                  <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#B01A19] to-[#eac7b8] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                )}
 
                 {/* Column header */}
                 <div className="flex items-center justify-between mb-5">

@@ -1,5 +1,5 @@
 import type { Training, TrainingType, TrainingRegistration, TrainingSession } from '@/../product/sections/academy/types'
-import { Calendar, Users, Euro, Home, MoreVertical } from 'lucide-react'
+import { Calendar, Users, Home, MoreVertical } from 'lucide-react'
 
 interface TrainingCardProps {
   training: Training
@@ -50,7 +50,7 @@ export function TrainingCard({
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString)
-    return date.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })
+    return date.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })
   }
 
   const isActiveStatus = training.status === 'in_progress' || training.status === 'registrations_open'
@@ -111,7 +111,7 @@ export function TrainingCard({
           </div>
         )}
 
-        {/* Participants with enhanced progress bar */}
+        {/* Participants with progress bar */}
         <div className="flex items-center gap-2 text-xs text-stone-600 dark:text-stone-400">
           <div className="p-1 rounded bg-stone-100 dark:bg-stone-800">
             <Users className="w-3 h-3" />
@@ -122,25 +122,11 @@ export function TrainingCard({
           <div className="w-20 h-2 bg-stone-200 dark:bg-stone-700 rounded-full overflow-hidden shadow-inner">
             <div
               className={`h-full transition-all duration-500 rounded-full ${
-                fillPercentage >= 100
-                  ? 'bg-gradient-to-r from-red-500 to-red-600'
-                  : fillPercentage >= 80
-                  ? 'bg-gradient-to-r from-yellow-500 to-orange-500'
-                  : fillPercentage >= 50
-                  ? 'bg-gradient-to-r from-green-500 to-emerald-500'
-                  : 'bg-gradient-to-r from-[#B01A19] to-[#eac7b8]'
+                fillPercentage >= 60 ? 'bg-green-500' : 'bg-red-500'
               }`}
               style={{ width: `${Math.min(fillPercentage, 100)}%` }}
             />
           </div>
-        </div>
-
-        {/* Price */}
-        <div className="flex items-center gap-2 text-xs text-stone-600 dark:text-stone-400">
-          <div className="p-1 rounded bg-stone-100 dark:bg-stone-800">
-            <Euro className="w-3 h-3" />
-          </div>
-          <span className="font-semibold">{training.price}€</span>
         </div>
 
         {/* Accommodation */}
@@ -154,14 +140,6 @@ export function TrainingCard({
         )}
       </div>
 
-      {/* Coordinator note preview */}
-      {training.coordinatorNote && (
-        <div className="pt-3 border-t border-stone-200 dark:border-stone-800">
-          <p className="text-xs text-stone-500 dark:text-stone-400 line-clamp-2 leading-relaxed">
-            {training.coordinatorNote}
-          </p>
-        </div>
-      )}
     </div>
   )
 }

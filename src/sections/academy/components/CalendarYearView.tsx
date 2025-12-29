@@ -172,7 +172,7 @@ export function CalendarYearView({
       </div>
 
       {/* Continuous Calendar */}
-      <div className="bg-white dark:bg-stone-900 rounded-xl border border-stone-200 dark:border-stone-800 shadow-lg overflow-hidden">
+      <div className="bg-white dark:bg-stone-900 rounded-xl border border-stone-200 dark:border-stone-800 shadow-lg overflow-visible">
         {/* Week day headers */}
         <div className="grid grid-cols-7 border-b-2 border-stone-200 dark:border-stone-800 sticky top-0 bg-white dark:bg-stone-900 z-10">
           {weekDays.map((day) => (
@@ -186,7 +186,7 @@ export function CalendarYearView({
         </div>
 
         {/* Calendar weeks - continuous */}
-        <div className="divide-y divide-stone-200 dark:divide-stone-800">
+        <div className="divide-y divide-stone-200 dark:divide-stone-800 overflow-visible">
           {allWeeks.map((week, weekIndex) => {
             const weekMonth = getMonthForWeek(week)
             const prevWeekMonth = weekIndex > 0 ? getMonthForWeek(allWeeks[weekIndex - 1]) : null
@@ -204,7 +204,7 @@ export function CalendarYearView({
                 )}
                 
                 {/* Week row */}
-                <div className="grid grid-cols-7 divide-x divide-stone-200 dark:divide-stone-800">
+                <div className="grid grid-cols-7 divide-x divide-stone-200 dark:divide-stone-800 overflow-visible">
                   {week.map((day, dayIndex) => {
                     const trainingsForDate = getTrainingsForDate(day.date)
                     const today = isToday(day.date)
@@ -302,7 +302,7 @@ export function CalendarYearView({
                                 >
                                   <div className={`w-2.5 h-2.5 rounded-full mt-0.5 shrink-0 ${statusColors[training.status]}`} />
                                   <div className="flex-1 min-w-0">
-                                    <div className="font-medium truncate group-hover:text-[#B01A19] transition-colors underline decoration-transparent group-hover:decoration-[#B01A19]">
+                                    <div className="font-medium truncate group-hover:text-lime-400 dark:group-hover:text-lime-300 transition-colors underline decoration-transparent group-hover:decoration-lime-400 dark:group-hover:decoration-lime-300">
                                       {training.title}
                                     </div>
                                     <div className="text-[10px] text-stone-400 mt-0.5">

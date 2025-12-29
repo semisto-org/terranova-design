@@ -137,6 +137,11 @@ export function TrainingDetail({
   const profitabilityPercent = totalRevenue > 0 ? Math.round((profitability / totalRevenue) * 100) : 0
   const registrationCount = registrations.length
   const fillRate = training.maxParticipants > 0 ? Math.round((registrationCount / training.maxParticipants) * 100) : 0
+  
+  // Calcul de la progression de la checklist
+  const checklistProgress = checklistItems.length > 0 
+    ? Math.round((checkedItems.length / checklistItems.length) * 100) 
+    : 0
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
@@ -226,7 +231,9 @@ export function TrainingDetail({
             <div className="mb-2">
               <div className="w-full bg-stone-200 dark:bg-stone-700 rounded-full h-2 overflow-hidden">
                 <div
-                  className="bg-gradient-to-r from-[#B01A19] to-[#eac7b8] h-full transition-all duration-500 rounded-full"
+                  className={`h-full transition-all duration-500 rounded-full ${
+                    fillRate >= 60 ? 'bg-green-500' : 'bg-red-500'
+                  }`}
                   style={{ width: `${Math.min(fillRate, 100)}%` }}
                 />
               </div>
@@ -283,64 +290,92 @@ export function TrainingDetail({
         </div>
       </div>
 
-      {/* Enhanced separator with Academy color */}
-      <div className="relative">
-        <div className="absolute inset-0 flex items-center">
-          <div className="w-full border-t border-stone-200 dark:border-stone-700"></div>
-        </div>
-        <div className="relative flex justify-center">
-          <div className="bg-white dark:bg-stone-900 px-4">
-            <div className="h-1 w-16 bg-gradient-to-r from-transparent via-[#B01A19] to-transparent rounded-full" />
-          </div>
-        </div>
-      </div>
-
-      {/* Enhanced Tabs with Academy accent */}
+      {/* Enhanced Tabs with Academy accent and integrated checklist progress */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-7 h-auto p-1.5 bg-stone-50 dark:bg-stone-800/50 rounded-xl border border-stone-200 dark:border-stone-700 shadow-inner">
-          <TabsTrigger 
-            value="info" 
-            className="flex flex-col items-center gap-1.5 py-3 rounded-lg transition-all duration-200 data-[state=active]:bg-[#B01A19] data-[state=active]:text-white data-[state=active]:shadow-md hover:bg-stone-100 dark:hover:bg-stone-800"
-          >
-            <Info className="size-5" />
-          </TabsTrigger>
-          <TabsTrigger 
-            value="sessions" 
-            className="flex flex-col items-center gap-1.5 py-3 rounded-lg transition-all duration-200 data-[state=active]:bg-[#B01A19] data-[state=active]:text-white data-[state=active]:shadow-md hover:bg-stone-100 dark:hover:bg-stone-800"
-          >
-            <Calendar className="size-5" />
-          </TabsTrigger>
-          <TabsTrigger 
-            value="registrations" 
-            className="flex flex-col items-center gap-1.5 py-3 rounded-lg transition-all duration-200 data-[state=active]:bg-[#B01A19] data-[state=active]:text-white data-[state=active]:shadow-md hover:bg-stone-100 dark:hover:bg-stone-800"
-          >
-            <Users className="size-5" />
-          </TabsTrigger>
-          <TabsTrigger 
-            value="attendances" 
-            className="flex flex-col items-center gap-1.5 py-3 rounded-lg transition-all duration-200 data-[state=active]:bg-[#B01A19] data-[state=active]:text-white data-[state=active]:shadow-md hover:bg-stone-100 dark:hover:bg-stone-800"
-          >
-            <User className="size-5" />
-          </TabsTrigger>
-          <TabsTrigger 
-            value="documents" 
-            className="flex flex-col items-center gap-1.5 py-3 rounded-lg transition-all duration-200 data-[state=active]:bg-[#B01A19] data-[state=active]:text-white data-[state=active]:shadow-md hover:bg-stone-100 dark:hover:bg-stone-800"
-          >
-            <FileText className="size-5" />
-          </TabsTrigger>
-          <TabsTrigger 
-            value="checklist" 
-            className="flex flex-col items-center gap-1.5 py-3 rounded-lg transition-all duration-200 data-[state=active]:bg-[#B01A19] data-[state=active]:text-white data-[state=active]:shadow-md hover:bg-stone-100 dark:hover:bg-stone-800"
-          >
-            <CheckSquare className="size-5" />
-          </TabsTrigger>
-          <TabsTrigger 
-            value="finances" 
-            className="flex flex-col items-center gap-1.5 py-3 rounded-lg transition-all duration-200 data-[state=active]:bg-[#B01A19] data-[state=active]:text-white data-[state=active]:shadow-md hover:bg-stone-100 dark:hover:bg-stone-800"
-          >
-            <DollarSign className="size-5" />
-          </TabsTrigger>
-        </TabsList>
+        <div className={`relative ${
+          checklistItems.length > 0 ? 'rounded-t-xl overflow-hidden' : ''
+        }`}>
+          <TabsList className={`grid w-full grid-cols-7 h-auto p-1.5 bg-stone-50 dark:bg-stone-800/50 border border-stone-200 dark:border-stone-700 shadow-inner ${
+            checklistItems.length > 0 
+              ? 'pb-3 rounded-t-xl rounded-b-none' 
+              : 'rounded-xl'
+          }`}>
+            <TabsTrigger 
+              value="info" 
+              className="flex flex-col items-center gap-1.5 py-3 rounded-lg transition-all duration-200 data-[state=active]:bg-[#B01A19] data-[state=active]:text-white data-[state=active]:shadow-md hover:bg-stone-100 dark:hover:bg-stone-800"
+            >
+              <Info className="size-5" />
+            </TabsTrigger>
+            <TabsTrigger 
+              value="sessions" 
+              className="flex flex-col items-center gap-1.5 py-3 rounded-lg transition-all duration-200 data-[state=active]:bg-[#B01A19] data-[state=active]:text-white data-[state=active]:shadow-md hover:bg-stone-100 dark:hover:bg-stone-800"
+            >
+              <Calendar className="size-5" />
+            </TabsTrigger>
+            <TabsTrigger 
+              value="registrations" 
+              className="flex flex-col items-center gap-1.5 py-3 rounded-lg transition-all duration-200 data-[state=active]:bg-[#B01A19] data-[state=active]:text-white data-[state=active]:shadow-md hover:bg-stone-100 dark:hover:bg-stone-800"
+            >
+              <Users className="size-5" />
+            </TabsTrigger>
+            <TabsTrigger 
+              value="attendances" 
+              className="flex flex-col items-center gap-1.5 py-3 rounded-lg transition-all duration-200 data-[state=active]:bg-[#B01A19] data-[state=active]:text-white data-[state=active]:shadow-md hover:bg-stone-100 dark:hover:bg-stone-800"
+            >
+              <User className="size-5" />
+            </TabsTrigger>
+            <TabsTrigger 
+              value="documents" 
+              className="flex flex-col items-center gap-1.5 py-3 rounded-lg transition-all duration-200 data-[state=active]:bg-[#B01A19] data-[state=active]:text-white data-[state=active]:shadow-md hover:bg-stone-100 dark:hover:bg-stone-800"
+            >
+              <FileText className="size-5" />
+            </TabsTrigger>
+            <TabsTrigger 
+              value="checklist" 
+              className="flex flex-col items-center gap-1.5 py-3 rounded-lg transition-all duration-200 data-[state=active]:bg-[#B01A19] data-[state=active]:text-white data-[state=active]:shadow-md hover:bg-stone-100 dark:hover:bg-stone-800"
+            >
+              <CheckSquare className="size-5" />
+            </TabsTrigger>
+            <TabsTrigger 
+              value="finances" 
+              className="flex flex-col items-center gap-1.5 py-3 rounded-lg transition-all duration-200 data-[state=active]:bg-[#B01A19] data-[state=active]:text-white data-[state=active]:shadow-md hover:bg-stone-100 dark:hover:bg-stone-800"
+            >
+              <DollarSign className="size-5" />
+            </TabsTrigger>
+          </TabsList>
+          
+          {/* Integrated Checklist Progress Bar as bottom border */}
+          {checklistItems.length > 0 && (
+            <div className="absolute bottom-0 left-0 right-0 h-1 overflow-hidden">
+              {/* Background track */}
+              <div className="absolute inset-0 bg-stone-200 dark:bg-stone-700" />
+              {/* Animated fill with gradient */}
+              <div 
+                className={`absolute bottom-0 left-0 h-full transition-all duration-700 ease-out relative overflow-hidden ${
+                  checklistProgress === 100 
+                    ? 'bg-gradient-to-r from-emerald-500 via-emerald-400 to-emerald-500' 
+                    : checklistProgress >= 60
+                    ? 'bg-gradient-to-r from-green-500 via-emerald-500 to-green-500'
+                    : 'bg-gradient-to-r from-red-500 via-red-400 to-red-500'
+                }`}
+                style={{ width: `${checklistProgress}%` }}
+              >
+                {/* Shimmer effect */}
+                <div 
+                  className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent"
+                  style={{
+                    animation: 'shimmer 2s infinite',
+                  }}
+                />
+                
+                {/* Completion sparkle */}
+                {checklistProgress === 100 && (
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/50 to-transparent animate-pulse" />
+                )}
+              </div>
+            </div>
+          )}
+        </div>
 
         <TabsContent value="info" className="mt-8 animate-in fade-in-0 slide-in-from-bottom-2 duration-300">
           <TrainingInfoTab

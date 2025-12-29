@@ -143,41 +143,53 @@ export function TrainingFinancesTab({
           <h4 className="text-base font-semibold text-stone-900 dark:text-stone-100 mb-4">
             Dépenses par catégorie
           </h4>
-          <div className="space-y-3">
+          
+          {/* Single progress bar with segments */}
+          <div className="mb-4 relative">
+            <div className="w-full bg-stone-200 dark:bg-stone-700 rounded-full h-4 overflow-visible flex">
+              {Object.entries(expensesByCategory)
+                .sort(([, a], [, b]) => b - a)
+                .map(([category, amount], index, array) => {
+                  const percentage = totalExpenses > 0
+                    ? (amount / totalExpenses) * 100
+                    : 0
+                  
+                  return (
+                    <div
+                      key={category}
+                      className={`${categoryColors[category as ExpenseCategory]} transition-all duration-300 hover:opacity-80 relative group cursor-pointer h-full`}
+                      style={{ 
+                        width: `${percentage}%`,
+                      }}
+                    >
+                      {/* Tooltip */}
+                      <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 bg-stone-900 dark:bg-stone-800 text-white text-xs rounded-lg shadow-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50">
+                        <div className="font-semibold mb-1">
+                          {categoryLabels[category as ExpenseCategory]}
+                        </div>
+                        <div className="text-stone-300 dark:text-stone-400">
+                          {amount.toLocaleString('fr-FR')} € ({Math.round(percentage)}%)
+                        </div>
+                        <div className="absolute top-full left-1/2 -translate-x-1/2 -mt-1 w-2 h-2 bg-stone-900 dark:bg-stone-800 rotate-45" />
+                      </div>
+                    </div>
+                  )
+                })}
+            </div>
+          </div>
+
+          {/* Legend */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             {Object.entries(expensesByCategory)
               .sort(([, a], [, b]) => b - a)
-              .map(([category, amount]) => {
-                const percentage = totalExpenses > 0
-                  ? Math.round((amount / totalExpenses) * 100)
-                  : 0
-
-                return (
-                  <div key={category}>
-                    <div className="flex items-center justify-between mb-1">
-                      <div className="flex items-center gap-2">
-                        <div className={`w-3 h-3 rounded-full ${categoryColors[category as ExpenseCategory]}`} />
-                        <span className="text-sm font-medium text-stone-900 dark:text-stone-100">
-                          {categoryLabels[category as ExpenseCategory]}
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <span className="text-sm text-stone-600 dark:text-stone-400">
-                          {percentage}%
-                        </span>
-                        <span className="text-sm font-medium text-stone-900 dark:text-stone-100">
-                          {amount.toLocaleString('fr-FR')} €
-                        </span>
-                      </div>
-                    </div>
-                    <div className="w-full bg-stone-200 dark:bg-stone-700 rounded-full h-2 overflow-hidden">
-                      <div
-                        className={`h-full ${categoryColors[category as ExpenseCategory]}`}
-                        style={{ width: `${percentage}%` }}
-                      />
-                    </div>
-                  </div>
-                )
-              })}
+              .map(([category]) => (
+                <div key={category} className="flex items-center gap-2">
+                  <div className={`w-3 h-3 rounded-full ${categoryColors[category as ExpenseCategory]}`} />
+                  <span className="text-sm font-medium text-stone-900 dark:text-stone-100">
+                    {categoryLabels[category as ExpenseCategory]}
+                  </span>
+                </div>
+              ))}
           </div>
         </div>
       )}

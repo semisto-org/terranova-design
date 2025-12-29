@@ -5,6 +5,7 @@ import type {
   TrainingSession,
   TrainingType,
   TrainingLocation,
+  TrainingRegistration,
   Member
 } from '@/../product/sections/academy/types'
 import { Button } from '@/components/ui/button'
@@ -16,6 +17,7 @@ interface TrainingCalendarProps {
   trainingSessions: TrainingSession[]
   trainingTypes: TrainingType[]
   trainingLocations: TrainingLocation[]
+  trainingRegistrations: TrainingRegistration[]
   members: Member[]
   onViewTraining?: (trainingId: string) => void
 }
@@ -27,6 +29,7 @@ export function TrainingCalendar({
   trainingSessions,
   trainingTypes,
   trainingLocations,
+  trainingRegistrations,
   members,
   onViewTraining,
 }: TrainingCalendarProps) {
@@ -161,6 +164,7 @@ export function TrainingCalendar({
             trainingSessions={trainingSessions}
             trainingTypes={trainingTypes}
             trainingLocations={trainingLocations}
+            trainingRegistrations={trainingRegistrations}
             members={members}
             getTraining={getTraining}
             getTrainingType={getTrainingType}

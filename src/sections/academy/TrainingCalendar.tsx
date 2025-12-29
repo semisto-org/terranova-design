@@ -8,6 +8,7 @@ export default function TrainingCalendarPreview() {
       trainingSessions={data.trainingSessions}
       trainingTypes={data.trainingTypes}
       trainingLocations={data.trainingLocations}
+      trainingRegistrations={data.trainingRegistrations}
       members={data.members}
       onViewTraining={(trainingId) => console.log('View training:', trainingId)}
     />

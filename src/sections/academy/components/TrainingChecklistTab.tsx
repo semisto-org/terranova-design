@@ -81,41 +81,6 @@ export function TrainingChecklistTab({
         </div>
       )}
 
-      {/* Add Item Form */}
-      {isAdding && (
-        <div className="bg-white dark:bg-stone-800/50 rounded-lg p-4 border border-stone-200 dark:border-stone-700">
-          <div className="flex gap-2">
-            <Input
-              value={newItem}
-              onChange={(e) => setNewItem(e.target.value)}
-              placeholder="Nouvelle action à effectuer..."
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') {
-                  handleAddItem()
-                } else if (e.key === 'Escape') {
-                  setIsAdding(false)
-                  setNewItem('')
-                }
-              }}
-              autoFocus
-            />
-            <Button onClick={handleAddItem} size="sm">
-              Ajouter
-            </Button>
-            <Button
-              onClick={() => {
-                setIsAdding(false)
-                setNewItem('')
-              }}
-              variant="outline"
-              size="sm"
-            >
-              Annuler
-            </Button>
-          </div>
-        </div>
-      )}
-
       {/* Checklist Items */}
       {checklistItems.length === 0 ? (
         <div className="bg-white dark:bg-stone-800/50 rounded-lg p-12 border border-stone-200 dark:border-stone-700 text-center">
@@ -123,14 +88,16 @@ export function TrainingChecklistTab({
           <p className="text-stone-500 dark:text-stone-400 mb-4">
             Aucune action dans la checklist
           </p>
-          <Button
-            onClick={() => setIsAdding(true)}
-            variant="outline"
-            size="sm"
-          >
-            <Plus className="size-4" />
-            Ajouter une action
-          </Button>
+          {!isAdding && (
+            <Button
+              onClick={() => setIsAdding(true)}
+              variant="outline"
+              size="sm"
+            >
+              <Plus className="size-4" />
+              Ajouter une action
+            </Button>
+          )}
         </div>
       ) : (
         <div className="space-y-2">
@@ -174,6 +141,53 @@ export function TrainingChecklistTab({
               </div>
             )
           })}
+          
+          {/* Add button at bottom of list */}
+          {!isAdding && (
+            <Button
+              onClick={() => setIsAdding(true)}
+              variant="outline"
+              className="w-full mt-2"
+            >
+              <Plus className="size-4" />
+              <span className="ml-2">Ajouter une action</span>
+            </Button>
+          )}
+        </div>
+      )}
+
+      {/* Add Item Form - at bottom */}
+      {isAdding && (
+        <div className="bg-white dark:bg-stone-800/50 rounded-lg p-4 border border-stone-200 dark:border-stone-700">
+          <div className="flex gap-2">
+            <Input
+              value={newItem}
+              onChange={(e) => setNewItem(e.target.value)}
+              placeholder="Nouvelle action à effectuer..."
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  handleAddItem()
+                } else if (e.key === 'Escape') {
+                  setIsAdding(false)
+                  setNewItem('')
+                }
+              }}
+              autoFocus
+            />
+            <Button onClick={handleAddItem} size="sm">
+              Ajouter
+            </Button>
+            <Button
+              onClick={() => {
+                setIsAdding(false)
+                setNewItem('')
+              }}
+              variant="outline"
+              size="sm"
+            >
+              Annuler
+            </Button>
+          </div>
         </div>
       )}
     </div>

@@ -1,10 +1,11 @@
-import { useState, useMemo } from 'react'
-import { Calendar, MapPin, Users, Euro, Home, ArrowRight, X } from 'lucide-react'
+import { useState, useMemo, useEffect } from 'react'
+import { Calendar, MapPin, Users, Home, ArrowRight, X, CheckSquare } from 'lucide-react'
 import type {
   Training,
   TrainingSession,
   TrainingType,
   TrainingLocation,
+  TrainingRegistration,
   Member
 } from '@/../product/sections/academy/types'
 import {
@@ -15,6 +16,7 @@ import {
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
+import { Table, TableBody, TableCell, TableRow } from '@/components/ui/table'
 
 interface CalendarMonthViewProps {
   currentDate: Date
@@ -22,6 +24,7 @@ interface CalendarMonthViewProps {
   trainingSessions: TrainingSession[]
   trainingTypes: TrainingType[]
   trainingLocations: TrainingLocation[]
+  trainingRegistrations: TrainingRegistration[]
   members: Member[]
   getTraining: (trainingId: string) => Training | undefined
   getTrainingType: (trainingTypeId: string) => TrainingType | undefined
@@ -53,6 +56,7 @@ export function CalendarMonthView({
   trainingSessions,
   trainingTypes,
   trainingLocations,
+  trainingRegistrations,
   members,
   getTraining,
   getTrainingType,
@@ -157,6 +161,61 @@ export function CalendarMonthView({
   const selectedSessions = selectedTraining ? getSessionsForTraining(selectedTraining.id) : []
   const firstSession = selectedSessions.length > 0 ? selectedSessions[0] : null
   const lastSession = selectedSessions.length > 0 ? selectedSessions[selectedSessions.length - 1] : null
+  
+  // Get registrations count for selected training
+  const getRegistrationsCount = (trainingId: string) => {
+    return trainingRegistrations.filter(r => r.trainingId === trainingId).length
+  }
+  
+  const registrationsCount = selectedTraining ? getRegistrationsCount(selectedTraining.id) : 0
+  const fillPercentage = selectedTraining 
+    ? Math.min(100, (registrationsCount / selectedTraining.maxParticipants) * 100)
+    : 0
+  
+  // Checklist state - initialize from template
+  const [checklistItems, setChecklistItems] = useState<Record<string, boolean>>({})
+  
+  // Initialize checklist when training changes
+  useEffect(() => {
+    if (selectedTraining && selectedTrainingType) {
+      const initial: Record<string, boolean> = {}
+      selectedTrainingType.checklistTemplate.forEach((item, index) => {
+        initial[index.toString()] = false // Default: unchecked
+      })
+      setChecklistItems(initial)
+    }
+  }, [selectedTraining?.id, selectedTrainingType?.id])
+  
+  // Get member by ID
+  const getMember = (memberId: string) => {
+    return members.find(m => m.id === memberId)
+  }
+  
+  // Format date for session
+  const formatSessionDate = (startDate: string, endDate: string) => {
+    const start = new Date(startDate)
+    const end = new Date(endDate)
+    const isSameDay = start.toDateString() === end.toDateString()
+    
+    if (isSameDay) {
+      const day = start.getDate().toString()
+      const month = (start.getMonth() + 1).toString().padStart(2, '0')
+      return `${day}/${month}`
+    }
+    
+    const startDay = start.getDate().toString()
+    const endDay = end.getDate().toString()
+    const month = (start.getMonth() + 1).toString().padStart(2, '0')
+    return `${startDay}-${endDay}/${month}`
+  }
+  
+  // Toggle checklist item
+  const toggleChecklistItem = (index: number) => {
+    setChecklistItems(prev => ({
+      ...prev,
+      [index.toString()]: !prev[index.toString()]
+    }))
+  }
 
   const weekDays = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim']
 
@@ -227,10 +286,11 @@ export function CalendarMonthView({
                     .filter(item => item.training)
 
                   return trainingsToShow.map(({ training, sessions: trainingSessions }) => {
-                    const trainingType = training ? getTrainingType(training.trainingTypeId) : undefined
                     const firstSession = trainingSessions[0]
                     const locationNames = firstSession ? getLocationNames(firstSession.locationIds) : []
                     const isMultiDay = firstSession && firstSession.startDate !== firstSession.endDate
+                    const trainingRegistrationsCount = getRegistrationsCount(training!.id)
+                    const trainingFillPercentage = Math.min(100, (trainingRegistrationsCount / training!.maxParticipants) * 100)
                     
                     const statusColors: Record<string, { bg: string; border: string; text: string }> = {
                       draft: {
@@ -281,17 +341,21 @@ export function CalendarMonthView({
                           <div className="font-semibold truncate mb-0.5">
                             {training!.title}
                           </div>
-                          {trainingType && (
-                            <div className="text-[10px] opacity-70 truncate mt-0.5">
-                              {trainingType.name}
-                            </div>
-                          )}
                           {locationNames.length > 0 && (
                             <div className="flex items-center gap-1 mt-1.5 text-[10px] opacity-60">
                               <MapPin className="w-2.5 h-2.5" />
                               <span className="truncate">{locationNames[0]}</span>
                             </div>
                           )}
+                          {/* Progress bar */}
+                          <div className="w-full h-1.5 bg-stone-200 dark:bg-stone-700 rounded-full overflow-hidden mt-1.5">
+                            <div
+                              className={`h-full transition-all duration-500 ${
+                                trainingFillPercentage >= 60 ? 'bg-green-500' : 'bg-red-500'
+                              }`}
+                              style={{ width: `${trainingFillPercentage}%` }}
+                            />
+                          </div>
                           {isMultiDay && trainingSessions.length > 1 && (
                             <div className="text-[10px] opacity-60 mt-0.5">
                               {trainingSessions.length} session{trainingSessions.length > 1 ? 's' : ''}
@@ -336,11 +400,6 @@ export function CalendarMonthView({
                     <DialogTitle className="text-2xl font-bold text-stone-900 dark:text-stone-100 mb-2 pr-8">
                       {selectedTraining.title}
                     </DialogTitle>
-                    {selectedTrainingType && (
-                      <p className="text-sm text-stone-500 dark:text-stone-400 font-medium">
-                        {selectedTrainingType.name}
-                      </p>
-                    )}
                   </div>
                   <Badge className={`${statusColors[selectedTraining.status]} text-white`}>
                     {statusLabels[selectedTraining.status]}
@@ -349,110 +408,140 @@ export function CalendarMonthView({
               </DialogHeader>
 
               <div className="space-y-6 mt-4">
-                {/* Dates */}
-                {firstSession && lastSession && (
-                  <div className="flex items-start gap-3 p-4 bg-stone-50 dark:bg-stone-800/50 rounded-xl border border-stone-200 dark:border-stone-700">
-                    <div className="p-2 rounded-lg bg-[#eac7b8]/20">
-                      <Calendar className="w-5 h-5 text-[#B01A19]" />
-                    </div>
-                    <div className="flex-1">
-                      <div className="text-xs font-medium text-stone-500 dark:text-stone-400 uppercase tracking-wide mb-1">
-                        Dates
-                      </div>
-                      <div className="text-base font-semibold text-stone-900 dark:text-stone-100">
-                        {formatDateRange(firstSession.startDate, lastSession.endDate)}
-                      </div>
-                      {selectedSessions.length > 1 && (
-                        <div className="text-xs text-stone-500 dark:text-stone-400 mt-1">
-                          {selectedSessions.length} session{selectedSessions.length > 1 ? 's' : ''}
-                        </div>
-                      )}
-                    </div>
+                {/* Participants with Progress */}
+                <div className="flex items-start gap-3 p-4 bg-stone-50 dark:bg-stone-800/50 rounded-xl border border-stone-200 dark:border-stone-700">
+                  <div className="p-2 rounded-lg bg-[#eac7b8]/20">
+                    <Users className="w-5 h-5 text-[#B01A19]" />
                   </div>
-                )}
-
-                {/* Info Grid */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  {/* Price */}
-                  <div className="flex items-start gap-3 p-4 bg-stone-50 dark:bg-stone-800/50 rounded-xl border border-stone-200 dark:border-stone-700">
-                    <div className="p-2 rounded-lg bg-emerald-50 dark:bg-emerald-900/20">
-                      <Euro className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
-                    </div>
-                    <div className="flex-1">
-                      <div className="text-xs font-medium text-stone-500 dark:text-stone-400 uppercase tracking-wide mb-1">
-                        Tarif
-                      </div>
-                      <div className="text-lg font-bold text-stone-900 dark:text-stone-100">
-                        {selectedTraining.price.toLocaleString('fr-FR')} €
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Participants */}
-                  <div className="flex items-start gap-3 p-4 bg-stone-50 dark:bg-stone-800/50 rounded-xl border border-stone-200 dark:border-stone-700">
-                    <div className="p-2 rounded-lg bg-[#eac7b8]/20">
-                      <Users className="w-5 h-5 text-[#B01A19]" />
-                    </div>
-                    <div className="flex-1">
-                      <div className="text-xs font-medium text-stone-500 dark:text-stone-400 uppercase tracking-wide mb-1">
+                  <div className="flex-1">
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="text-xs font-medium text-stone-500 dark:text-stone-400 uppercase tracking-wide">
                         Participants
                       </div>
-                      <div className="text-lg font-bold text-stone-900 dark:text-stone-100">
-                        {selectedTraining.maxParticipants} max
+                      <div className="text-sm font-semibold text-stone-900 dark:text-stone-100">
+                        {registrationsCount} / {selectedTraining.maxParticipants}
                       </div>
+                    </div>
+                    {/* Progress bar */}
+                    <div className="w-full h-3 bg-stone-200 dark:bg-stone-700 rounded-full overflow-hidden">
+                      <div
+                        className={`h-full transition-all duration-500 ${
+                          fillPercentage >= 60 ? 'bg-green-500' : 'bg-red-500'
+                        }`}
+                        style={{ width: `${fillPercentage}%` }}
+                      />
                     </div>
                   </div>
                 </div>
 
-                {/* Locations */}
-                {selectedSessions.length > 0 && (() => {
-                  const allLocationIds = new Set(
-                    selectedSessions.flatMap(s => s.locationIds)
-                  )
-                  const uniqueLocations = Array.from(allLocationIds)
-                    .map(id => trainingLocations.find(loc => loc.id === id))
-                    .filter(Boolean) as TrainingLocation[]
-
-                  if (uniqueLocations.length === 0) return null
-
-                  return (
-                    <div className="flex items-start gap-3 p-4 bg-stone-50 dark:bg-stone-800/50 rounded-xl border border-stone-200 dark:border-stone-700">
-                      <div className="p-2 rounded-lg bg-[#eac7b8]/20">
-                        <MapPin className="w-5 h-5 text-[#B01A19]" />
-                      </div>
-                      <div className="flex-1">
-                        <div className="text-xs font-medium text-stone-500 dark:text-stone-400 uppercase tracking-wide mb-2">
-                          Lieux
-                        </div>
-                        <div className="space-y-1">
-                          {uniqueLocations.map(location => (
-                            <div key={location.id} className="text-sm text-stone-900 dark:text-stone-100 font-medium">
-                              {location.name}
-                              {location.hasAccommodation && (
-                                <span className="ml-2 inline-flex items-center gap-1 text-xs text-stone-500 dark:text-stone-400">
-                                  <Home className="w-3 h-3" />
-                                  Hébergement
-                                </span>
-                              )}
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                  )
-                })()}
-
-                {/* Description */}
-                {selectedTraining.description && (
+                {/* Sessions List */}
+                {selectedSessions.length > 0 && (
                   <div className="p-4 bg-stone-50 dark:bg-stone-800/50 rounded-xl border border-stone-200 dark:border-stone-700">
-                    <div className="text-xs font-medium text-stone-500 dark:text-stone-400 uppercase tracking-wide mb-2">
-                      Description
+                    <div className="text-xs font-medium text-stone-500 dark:text-stone-400 uppercase tracking-wide mb-3">
+                      Sessions
                     </div>
-                    <p className="text-sm text-stone-700 dark:text-stone-300 leading-relaxed">
-                      {selectedTraining.description}
-                    </p>
+                    <div className="space-y-4">
+                      {selectedSessions.map((session, index) => {
+                        const sessionTrainers = session.trainerIds.map(id => getMember(id)).filter(Boolean) as Member[]
+                        const sessionAssistants = session.assistantIds.map(id => getMember(id)).filter(Boolean) as Member[]
+                        const allStaff = [...sessionTrainers, ...sessionAssistants]
+                        const sessionLocations = session.locationIds
+                          .map(id => trainingLocations.find(loc => loc.id === id))
+                          .filter(Boolean) as TrainingLocation[]
+                        
+                        return (
+                          <div key={session.id} className={`${index < selectedSessions.length - 1 ? 'border-b border-stone-200 dark:border-stone-700 pb-4' : ''}`}>
+                            {/* Ligne 1: Date à gauche, Lieu à droite */}
+                            <div className="flex items-center justify-between mb-2">
+                              <div className="font-medium text-stone-900 dark:text-stone-100">
+                                {formatSessionDate(session.startDate, session.endDate)}
+                              </div>
+                              <div className="text-stone-700 dark:text-stone-300 text-sm">
+                                {sessionLocations.length > 0 ? (
+                                  <div className="flex items-center gap-1">
+                                    <MapPin className="w-3.5 h-3.5" />
+                                    <span>{sessionLocations.map(l => l.name).join(', ')}</span>
+                                  </div>
+                                ) : (
+                                  <span className="text-stone-400 dark:text-stone-500">-</span>
+                                )}
+                              </div>
+                            </div>
+                            
+                            {/* Ligne 2: Sujet à gauche, Avatars à droite */}
+                            <div className="flex items-start justify-between gap-4">
+                              <div className="flex-1 min-w-0 text-stone-700 dark:text-stone-300 text-sm break-words">
+                                {session.description || 'Session'}
+                              </div>
+                              <div className="shrink-0">
+                                {allStaff.length > 0 ? (
+                                  <div className="flex -space-x-2">
+                                    {allStaff.slice(0, 4).map((person) => (
+                                      <img
+                                        key={person.id}
+                                        src={person.avatar}
+                                        alt={`${person.firstName} ${person.lastName}`}
+                                        className="w-7 h-7 rounded-full border-2 border-white dark:border-stone-900 bg-stone-100"
+                                        title={`${person.firstName} ${person.lastName}`}
+                                      />
+                                    ))}
+                                    {allStaff.length > 4 && (
+                                      <div className="w-7 h-7 rounded-full border-2 border-white dark:border-stone-900 bg-stone-200 dark:bg-stone-700 flex items-center justify-center text-xs font-medium text-stone-600 dark:text-stone-300">
+                                        +{allStaff.length - 4}
+                                      </div>
+                                    )}
+                                  </div>
+                                ) : (
+                                  <span className="text-sm text-stone-400 dark:text-stone-500">-</span>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        )
+                      })}
+                    </div>
                   </div>
                 )}
+
+                {/* Checklist */}
+                {selectedTrainingType && selectedTrainingType.checklistTemplate.length > 0 && (
+                  <div className="p-4 bg-stone-50 dark:bg-stone-800/50 rounded-xl border border-stone-200 dark:border-stone-700">
+                    <div className="flex items-center gap-2 mb-3">
+                      <div className="p-1.5 rounded-lg bg-[#eac7b8]/20">
+                        <CheckSquare className="w-4 h-4 text-[#B01A19]" />
+                      </div>
+                      <div className="text-xs font-medium text-stone-500 dark:text-stone-400 uppercase tracking-wide">
+                        Checklist
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      {selectedTrainingType.checklistTemplate.map((item, index) => {
+                        const isChecked = checklistItems[index.toString()] || false
+                        return (
+                          <label
+                            key={index}
+                            className="flex items-start gap-3 p-2 rounded-lg hover:bg-stone-100 dark:hover:bg-stone-800/50 cursor-pointer transition-colors group"
+                          >
+                            <input
+                              type="checkbox"
+                              checked={isChecked}
+                              onChange={() => toggleChecklistItem(index)}
+                              className="mt-0.5 w-4 h-4 rounded border-stone-300 dark:border-stone-600 text-[#B01A19] focus:ring-[#B01A19] focus:ring-offset-0 cursor-pointer"
+                            />
+                            <span className={`flex-1 text-sm ${
+                              isChecked 
+                                ? 'text-stone-500 dark:text-stone-400 line-through' 
+                                : 'text-stone-900 dark:text-stone-100'
+                            } group-hover:text-[#B01A19] transition-colors`}>
+                              {item}
+                            </span>
+                          </label>
+                        )
+                      })}
+                    </div>
+                  </div>
+                )}
+
               </div>
 
               {/* Actions */}

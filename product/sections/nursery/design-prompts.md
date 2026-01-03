@@ -368,3 +368,4 @@ Utilise les props CatalogProps. Le design doit être clair et permettre aux desi
 10. **ContainerList** - Configuration
 11. **Catalog** - Vue designers
 
+

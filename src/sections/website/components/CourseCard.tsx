@@ -23,13 +23,25 @@ export function CourseCard({ course, onView }: CourseCardProps) {
       onClick={onView}
       className="group relative flex flex-col bg-white dark:bg-stone-800 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1 text-left w-full"
     >
-      {/* Image placeholder with gradient */}
+      {/* Image with overlay */}
       <div className="relative h-48 overflow-hidden">
-        <div 
-          className="absolute inset-0 bg-gradient-to-br from-[#5B5781] to-[#AFBD00] opacity-90"
-        />
-        <div 
-          className="absolute inset-0 opacity-20"
+        {/* Background image */}
+        {course.image ? (
+          <img
+            src={course.image}
+            alt={course.title}
+            className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+          />
+        ) : (
+          <div className="absolute inset-0 bg-gradient-to-br from-[#5B5781] to-[#AFBD00]" />
+        )}
+
+        {/* Gradient overlay for readability */}
+        <div className="absolute inset-0 bg-gradient-to-t from-stone-900/80 via-stone-900/30 to-stone-900/10" />
+
+        {/* Decorative pattern overlay */}
+        <div
+          className="absolute inset-0 opacity-10 mix-blend-overlay"
           style={{
             backgroundImage: `url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M20 5c-5 8-15 12-15 22 0 6 6 8 15 8s15-2 15-8c0-10-10-14-15-22z' fill='white' fill-opacity='0.3'/%3E%3C/svg%3E")`,
             backgroundSize: '40px 40px'

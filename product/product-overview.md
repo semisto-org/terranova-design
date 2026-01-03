@@ -10,12 +10,12 @@ Terranova orchestre des cycles de travail inspirés de Shape Up, facilite le fin
 
 ## Vision
 
-Semisto pose les bases d'un Quartier Général de la forêt comestible européenne, situé aux 4 Sources à Yvoir (Belgique). De ce lieu émergent de nouveaux métiers, de nouvelles compétences, des outils robustes et des contenus permettant de sensibiliser tous les citoyens européens aux enjeux de sécurité alimentaire, de nutrition saine et de régénération de la biodiversité.
+Semisto fait émerger de nouveaux métiers, de nouvelles compétences, des outils robustes et des contenus permettant de sensibiliser et mobiliser tous les citoyens européens aux enjeux de sécurité alimentaire, de nutrition saine et de régénération de la biodiversité.
 
 Terranova est l'outil qui permet de :
 - Favoriser, accompagner et soutenir l'émergence d'initiatives locales
 - Tisser des liens entre les initiatives européennes
-- Déployer la sylvanerie dans toute l'Europe
+- Déployer les forêts comestibles dans toute l'Europe
 - Permettre à chaque citoyen de contribuer à la transformation et de voir son impact concret
 
 ## Plan stratégique sur 20 ans

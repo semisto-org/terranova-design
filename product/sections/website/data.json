@@ -122,7 +122,7 @@
       "spotsAvailable": 8,
       "spotsTotal": 20,
       "location": "Ferme de la Forêt, Namur",
-      "image": "/images/courses/pdc.jpg",
+      "image": "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=800&q=80",
       "instructors": ["Marie Fontaine", "Pierre Delcourt"],
       "isFeatured": true
     },
@@ -143,7 +143,7 @@
       "spotsAvailable": 12,
       "spotsTotal": 16,
       "location": "Semisto Lab, Namur",
-      "image": "/images/courses/design-jf.jpg",
+      "image": "https://images.unsplash.com/photo-1500651230702-0e2d8a49d4ad?w=800&q=80",
       "instructors": ["Marie Fontaine"],
       "isFeatured": true
     },
@@ -164,7 +164,7 @@
       "spotsAvailable": 4,
       "spotsTotal": 12,
       "location": "Pépinière Semisto, Gembloux",
-      "image": "/images/courses/multiplication.jpg",
+      "image": "https://images.unsplash.com/photo-1591857177580-dc82b9ac4e1e?w=800&q=80",
       "instructors": ["Thomas Beaumont"],
       "isFeatured": false
     },
@@ -185,7 +185,7 @@
       "spotsAvailable": 15,
       "spotsTotal": 18,
       "location": "Ferme urbaine de Montreuil",
-      "image": "/images/courses/sols.jpg",
+      "image": "https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=800&q=80",
       "instructors": ["Camille Rousseau"],
       "isFeatured": true
     },
@@ -206,7 +206,7 @@
       "spotsAvailable": 10,
       "spotsTotal": 14,
       "location": "Mas Can Pujol, Girona",
-      "image": "/images/courses/mediterranis.jpg",
+      "image": "https://images.unsplash.com/photo-1523348837708-15d4a09cfac2?w=800&q=80",
       "instructors": ["Jordi Puigvert"],
       "isFeatured": true
     },
@@ -227,7 +227,7 @@
       "spotsAvailable": 45,
       "spotsTotal": 50,
       "location": null,
-      "image": "/images/courses/intro-online.jpg",
+      "image": "https://images.unsplash.com/photo-1501004318641-b39e6451bec6?w=800&q=80",
       "instructors": ["Marie Fontaine", "Pierre Delcourt"],
       "isFeatured": true
     },
@@ -248,7 +248,7 @@
       "spotsAvailable": 12,
       "spotsTotal": 15,
       "location": "Gemeinschaftsgarten Köln-Ehrenfeld",
-      "image": "/images/courses/waldgarten.jpg",
+      "image": "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=800&q=80",
       "instructors": ["Hans Weber"],
       "isFeatured": false
     },
@@ -269,7 +269,7 @@
       "spotsAvailable": 6,
       "spotsTotal": 10,
       "location": "Vivers Semisto, Girona",
-      "image": "/images/courses/empelt.jpg",
+      "image": "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=80",
       "instructors": ["Marta Casals"],
       "isFeatured": false
     }
@@ -1244,4 +1244,5 @@
     }
   ]
 }
+
 
